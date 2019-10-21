@@ -1,67 +1,111 @@
-#include <vector>
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
-#include <string.h>
+#include <string.h> 
 using namespace std;
 
-vector<char*>* genSuffledDeck();    // Generate a shuffled deck
+char** genShuffledDeck();
+void showDeck(char**, const int&, const int&);
+void swap(char&, char&);
+void pushFront(char**, int&);
+void pushIndex(char**, int&);
 
 // All cards
-static char cards[13][5] = {"K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2", "A"};
+static char cards[13][3] = {
+	"K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2", "A"
+};
 
 int main()
 {
-    // Get shuffled deck
-    vector<char*>* deck = genSuffledDeck();
 
-    // Draw cards
-    int target = 0; // the one we want to draw
-    do{
-        // Show the deck
-        for(int i = 0; i < deck->size(); i++)
-            cout << deck->at(i) << " ";
-        cout << endl;
+	// Get shuffled deck
+	char** deck = genShuffledDeck();
 
-        // Check the first card
-        // If target, remove it and change to next target
-        if(strcmp(cards[target], deck->at(0)) == 0)
-        {
-            deck->erase(deck->begin());
-            target++;
-        }
-        // If not, put it to the last
-        else
-        {
-            deck->push_back(deck->at(0));
-            deck->erase(deck->begin());
-        }
-    }while(deck->size() != 0);  // break when the deck is empty
+	// Draw cards
+	int target = 0;	// the one we want to draw
+	int front = 0;
+	int rear = 12;
 
-    return 0;
+	while(true)
+	{
+		// Show deck
+		showDeck(deck, front, rear);
+
+		if(target == 12) break;
+		
+		// If target, remove it and change to next target
+		if(strcmp(cards[target], deck[front]) == 0)
+		{
+			delete deck[front];
+			deck[front] = NULL;
+			pushIndex(deck, front);
+			target++;
+		}
+		// If not, push the queue forward
+		else{
+			pushIndex(deck, front);
+			pushIndex(deck, rear);
+		}
+	}
+	
+	return 0;
 }
 
-// Generate a shuffled deck
-vector<char*>* genSuffledDeck()
+char** genShuffledDeck()
 {
-    // Cards have not been assigned
-    vector<char*> left;
-    for(int i = 0; i < 13; i++)
-        left.push_back(cards[i]);
+	// Cards have not been assigned
+	char* left[13];
+	for(int i = 0; i < 13; i++)
+	{
+		left[i] = new char[3];
+		strcpy(left[i], cards[i]);
+	}
 
-    // Shuffle (insert by random order)
-    srand(time(NULL));
-    vector<char*>* shuffled = new vector<char*>();
-    for(int i = 0; i < 13; i++)
-    {
-        // Decide the card
-        int index = rand() % (13 - i);
-        char* temp = new char[5];
-        strcpy(temp, left.at(index));
+	// Suffle (insert by random order)
+	srand(time(NULL));
+	char** shuffled = new char*[13];
+	for(int i = 0; i < 13; i++)
+	{
+		//Decide the card
+		int index = rand() % (13 - i);
+		shuffled[i] = new char[3];
+		strcpy(shuffled[i], left[index]);
+		swap(left[index], left[12 - i]);
+	}
 
-        // Add to shuffled deck, and remove from left one
-        shuffled->push_back(temp);
-        left.erase(left.begin() + index);
-    }
-    return shuffled;
+	for(int i = 0; i < 13; i++) delete left[i];
+	return shuffled;
+}
+
+void showDeck(char** deck, const int& front, const int& rear)
+{
+	int i = front;
+	while(true)
+	{
+		if(deck[i] != NULL) cout << deck[i] << " ";
+		if(i == rear) break;
+
+		i++;
+		if(i >= 13) i = 0;
+	}
+	cout << endl;
+	return;
+}
+
+// Swap position of two cards
+void swap(char& a, char& b)
+{
+	char temp = a;
+	a = b;
+	b = a;
+	return;
+}
+
+void pushIndex(char** queue, int& i)
+{
+	do{
+		i++;
+		if(i >= 13) i = 0;
+	}while(queue[i] == NULL);
+	return;
 }
