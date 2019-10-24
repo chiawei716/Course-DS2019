@@ -1,13 +1,11 @@
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
-#include <string.h> 
-using namespace std;
+#include <string.h>
 
 char** genShuffledDeck();
 void showDeck(char**, const int&, const int&);
-void swap(char&, char&);
-void pushFront(char**, int&);
+void swap(char*&, char*&);
 void pushIndex(char**, int&);
 
 // All cards
@@ -15,9 +13,10 @@ static char cards[13][3] = {
 	"K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2", "A"
 };
 
+using std::cout;
+using std::endl;
 int main()
 {
-
 	// Get shuffled deck
 	char** deck = genShuffledDeck();
 
@@ -25,12 +24,10 @@ int main()
 	int target = 0;	// the one we want to draw
 	int front = 0;
 	int rear = 12;
-
 	while(true)
 	{
 		// Show deck
 		showDeck(deck, front, rear);
-
 		if(target == 12) break;
 		
 		// If target, remove it and change to next target
@@ -47,10 +44,10 @@ int main()
 			pushIndex(deck, rear);
 		}
 	}
-	
 	return 0;
 }
 
+// Generate a shuffled deck
 char** genShuffledDeck()
 {
 	// Cards have not been assigned
@@ -77,6 +74,7 @@ char** genShuffledDeck()
 	return shuffled;
 }
 
+// Show deck
 void showDeck(char** deck, const int& front, const int& rear)
 {
 	int i = front;
@@ -93,14 +91,15 @@ void showDeck(char** deck, const int& front, const int& rear)
 }
 
 // Swap position of two cards
-void swap(char& a, char& b)
+void swap(char*& a, char*& b)
 {
-	char temp = a;
+	char* temp = a;
 	a = b;
-	b = a;
+	b = temp;
 	return;
 }
 
+// Push index forward
 void pushIndex(char** queue, int& i)
 {
 	do{
