@@ -62,11 +62,12 @@ void qsort(int* data, int left, int right)
 	if(left >= right || right <= left || left < 0 || right >= SIZE) return;
 
 	// choose left most pivot
-	int pivot = median(data[left], data[right], data[(left + right) / 2]);
+	int mid = (left + right) / 2;
+	int pivot = median(data[left], data[right], data[mid]);
 
 	// swap it to leftmost
 	if(pivot == data[right]) swap(data, right, left);
-	else if(pivot == data[(left + right) / 2]) swap(data, (left + right) / 2, left);
+	else if(pivot == data[mid]) swap(data, mid, left);
 
 	// two process variables
 	int check = right;
